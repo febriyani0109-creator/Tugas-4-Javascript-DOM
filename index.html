@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Interaktif — Teknologi Informasi</title>
+
+    <!-- Google Fonts: Poppins untuk heading, Inter untuk body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ============================================================
+       CONTAINER UTAMA — semua layar diletakkan di sini
+       DOM: Semua elemen di bawah ini akan diakses & dimanipulasi
+             melalui document.getElementById() di script.js
+  ============================================================ -->
+    <div class="app-wrapper">
+      <!-- ── LAYAR 1: HALAMAN AWAL ── -->
+      <div id="screen-start" class="screen active">
+        <div class="start-card">
+          <!-- Ikon dekoratif -->
+          <div class="hero-icon" aria-hidden="true">🧠</div>
+
+          <span class="eyebrow">Praktikum Pemrograman Web</span>
+          <h1 class="title-main">Quiz Interaktif</h1>
+          <p class="subtitle">
+            Uji pemahamanmu tentang konsep dasar Teknologi Informasi.<br />
+            5 soal pilihan ganda menantimu!
+          </p>
+
+          <!-- Metadata quiz -->
+          <ul class="quiz-meta" aria-label="Detail quiz">
+            <li><span class="meta-icon">📋</span> 5 Soal</li>
+            <li><span class="meta-icon">🎯</span> Pilihan Ganda</li>
+            <li><span class="meta-icon">⚡</span> Langsung Mulai</li>
+          </ul>
+
+          <!--
+          EVENT LISTENER TARGET #1
+          Tombol ini dipasangi addEventListener('click', ...) di script.js
+          untuk memulai quiz
+        -->
+          <button id="btn-start" class="btn btn-primary">
+            Mulai Quiz
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── LAYAR 2: HALAMAN SOAL ── -->
+      <div id="screen-quiz" class="screen">
+        <!-- Header: nomor soal & progress bar -->
+        <div class="quiz-header">
+          <!--
+          DOM TARGET: teks "Soal X dari Y" diupdate via
+          document.getElementById('question-counter').textContent
+        -->
+          <span id="question-counter" class="question-counter">Soal 1 dari 5</span>
+          <span id="score-live" class="score-live">Skor: 0</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <!--
+          DOM TARGET: lebar elemen ini diubah via
+          document.getElementById('progress-fill').style.width
+        -->
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
+        <!-- Kartu Soal -->
+        <div class="question-card">
+          <!--
+          DOM TARGET: teks soal dimasukkan via
+          document.getElementById('question-text').textContent
+        -->
+          <p id="question-text" class="question-text"></p>
+
+          <!--
+          DOM TARGET: opsi jawaban di-render secara dinamis ke dalam
+          elemen ini menggunakan innerHTML / createElement di script.js
+        -->
+          <div id="options-container" class="options-container" role="radiogroup"></div>
+        </div>
+
+        <!--
+        EVENT LISTENER TARGET #2
+        Tombol ini dipasangi addEventListener('click', ...) di script.js
+        untuk berpindah ke soal berikutnya
+      -->
+        <button id="btn-next" class="btn btn-primary" disabled>
+          Soal Berikutnya
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+
+      <!-- ── LAYAR 3: HALAMAN HASIL ── -->
+      <div id="screen-result" class="screen">
+        <div class="result-card">
+          <!--
+          DOM TARGET: emoji hasil diubah sesuai performa via
+          document.getElementById('result-emoji').textContent
+        -->
+          <div id="result-emoji" class="result-emoji" aria-hidden="true">🏆</div>
+
+          <!--
+          DOM TARGET: judul hasil diubah via
+          document.getElementById('result-title').textContent
+        -->
+          <h2 id="result-title" class="result-title">Hasil Quiz</h2>
+
+          <!-- Grid statistik -->
+          <div class="stats-grid">
+            <div class="stat-card stat-score">
+              <span class="stat-label">Skor Akhir</span>
+              <!--
+              DOM TARGET: skor akhir (0–100) diisi via
+              document.getElementById('final-score').textContent
+            -->
+              <span id="final-score" class="stat-value">0</span>
+            </div>
+            <div class="stat-card stat-correct">
+              <span class="stat-label">✅ Benar</span>
+              <span id="correct-count" class="stat-value">0</span>
+            </div>
+            <div class="stat-card stat-wrong">
+              <span class="stat-label">❌ Salah</span>
+              <span id="wrong-count" class="stat-value">0</span>
+            </div>
+          </div>
+
+          <!--
+          DOM TARGET: pesan motivasi diisi via
+          document.getElementById('result-message').textContent
+        -->
+          <p id="result-message" class="result-message"></p>
+
+          <!--
+          EVENT LISTENER TARGET #3
+          Tombol ini dipasangi addEventListener('click', ...) di script.js
+          untuk mereset dan mengulang quiz dari awal
+        -->
+          <button id="btn-restart" class="btn btn-primary">
+            Ulangi Quiz
+            <span class="btn-arrow" aria-hidden="true">↺</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /app-wrapper -->
+
+    <!-- Script diletakkan sebelum </body> agar DOM sudah siap dibaca -->
+    <script src="script.js"></script>
+  </body>
+</html>
