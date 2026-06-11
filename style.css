@@ -1,0 +1,536 @@
+/* ================================================================
+   style.css — Quiz Interaktif
+   Tema: Dark Navy + Electric Indigo
+   Font: Poppins (heading) + Inter (body)
+================================================================ */
+
+/* ── 1. CSS CUSTOM PROPERTIES (Variabel Warna & Tipografi) ── */
+:root {
+  /* Palet warna utama */
+  --clr-bg: #0f172a; /* navy gelap — background utama */
+  --clr-surface: #1e293b; /* slate — permukaan kartu */
+  --clr-surface-2: #273449; /* slate lebih terang — hover state */
+  --clr-border: #334155; /* garis pembatas */
+
+  --clr-primary: #6366f1; /* indigo — aksen utama */
+  --clr-primary-h: #4f46e5; /* indigo hover */
+  --clr-primary-glow: rgba(99, 102, 241, 0.35);
+
+  --clr-correct: #10b981; /* emerald — jawaban benar */
+  --clr-correct-bg: rgba(16, 185, 129, 0.15);
+  --clr-wrong: #f43f5e; /* rose — jawaban salah */
+  --clr-wrong-bg: rgba(244, 63, 94, 0.15);
+
+  --clr-text: #f1f5f9; /* teks utama */
+  --clr-text-muted: #94a3b8; /* teks sekunder */
+
+  /* Tipografi */
+  --ff-display: "Poppins", sans-serif;
+  --ff-body: "Inter", sans-serif;
+
+  /* Spacing & radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+
+  /* Transisi */
+  --transition: 0.25s ease;
+}
+
+/* ── 2. RESET & BASE ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--ff-body);
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  /* Pola titik-titik halus sebagai background texture */
+  background-image: radial-gradient(var(--clr-border) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ── 3. LAYOUT WRAPPER ── */
+.app-wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* ── 4. SISTEM LAYAR (SCREEN SWITCHING) ──
+   Hanya layar dengan class .active yang tampil.
+   Class ini ditambah/hapus oleh JavaScript via classList.
+*/
+.screen {
+  display: none; /* semua layar disembunyikan secara default */
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeSlideIn 0.4s ease forwards;
+}
+
+.screen.active {
+  display: flex; /* layar aktif ditampilkan */
+}
+
+/* Animasi masuk layar */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── 5. KARTU (SURFACE) ── */
+.start-card,
+.question-card,
+.result-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Garis aksen di atas kartu */
+.start-card::before,
+.result-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--clr-primary), #a78bfa);
+}
+
+/* ── 6. LAYAR AWAL ── */
+.start-card {
+  text-align: center;
+  padding: 48px 32px;
+}
+
+.hero-icon {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 20px;
+  display: block;
+  /* Efek float naik-turun */
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.eyebrow {
+  font-family: var(--ff-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--clr-primary);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.title-main {
+  font-family: var(--ff-display);
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  /* Gradient text */
+  background: linear-gradient(135deg, #fff 30%, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: var(--clr-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+/* Metadata quiz (pills) */
+.quiz-meta {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  list-style: none;
+  margin-bottom: 32px;
+}
+
+.quiz-meta li {
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-full);
+  padding: 6px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── 7. HEADER QUIZ (nomor soal + skor live) ── */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.question-counter {
+  font-family: var(--ff-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+
+.score-live {
+  font-family: var(--ff-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--clr-primary);
+  background: rgba(99, 102, 241, 0.12);
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+}
+
+/* ── 8. PROGRESS BAR ── */
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--clr-surface-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%; /* diubah oleh JavaScript */
+  background: linear-gradient(90deg, var(--clr-primary), #a78bfa);
+  border-radius: var(--radius-full);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── 9. KARTU SOAL ── */
+.question-card {
+  padding: 28px 24px;
+}
+
+.question-text {
+  font-family: var(--ff-display);
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--clr-text);
+  margin-bottom: 24px;
+}
+
+/* ── 10. PILIHAN JAWABAN (OPTIONS) ── */
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Setiap pilihan adalah <button> yang dibuat oleh JavaScript */
+.option-btn {
+  width: 100%;
+  background: var(--clr-surface-2);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--ff-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--clr-text);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+  position: relative;
+}
+
+.option-btn:hover:not(:disabled) {
+  background: #2d3f5a;
+  border-color: var(--clr-primary);
+  transform: translateX(4px);
+}
+
+/* Badge huruf (A, B, C, D) */
+.option-badge {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--clr-text-muted);
+  transition:
+    background var(--transition),
+    color var(--transition);
+}
+
+/* State: jawaban dipilih (belum diverifikasi) */
+.option-btn.selected {
+  border-color: var(--clr-primary);
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.option-btn.selected .option-badge {
+  background: var(--clr-primary);
+  color: #fff;
+  border-color: var(--clr-primary);
+}
+
+/* State: jawaban BENAR */
+.option-btn.correct {
+  border-color: var(--clr-correct);
+  background: var(--clr-correct-bg);
+}
+
+.option-btn.correct .option-badge {
+  background: var(--clr-correct);
+  color: #fff;
+  border-color: var(--clr-correct);
+}
+
+/* State: jawaban SALAH */
+.option-btn.wrong {
+  border-color: var(--clr-wrong);
+  background: var(--clr-wrong-bg);
+}
+
+.option-btn.wrong .option-badge {
+  background: var(--clr-wrong);
+  color: #fff;
+  border-color: var(--clr-wrong);
+}
+
+/* Nonaktifkan semua opsi setelah menjawab */
+.option-btn:disabled {
+  cursor: not-allowed;
+}
+
+/* ── 11. TOMBOL UTAMA ── */
+.btn {
+  font-family: var(--ff-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition:
+    background var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition),
+    opacity var(--transition);
+}
+
+.btn-primary {
+  background: var(--clr-primary);
+  color: #fff;
+  width: 100%;
+  box-shadow: 0 4px 20px var(--clr-primary-glow);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--clr-primary-h);
+  box-shadow: 0 6px 28px var(--clr-primary-glow);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Tombol nonaktif (sebelum memilih jawaban) */
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-arrow {
+  font-size: 1.1rem;
+  transition: transform var(--transition);
+}
+
+.btn:hover:not(:disabled) .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* ── 12. LAYAR HASIL ── */
+.result-card {
+  text-align: center;
+  padding: 48px 32px;
+}
+
+.result-emoji {
+  font-size: 72px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 16px;
+  animation: bounceIn 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  80% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.result-title {
+  font-family: var(--ff-display);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  margin-bottom: 28px;
+  background: linear-gradient(135deg, #fff 30%, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Grid statistik 3 kolom */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-family: var(--ff-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Warna nilai masing-masing stat */
+.stat-score .stat-value {
+  color: var(--clr-primary);
+}
+.stat-correct .stat-value {
+  color: var(--clr-correct);
+}
+.stat-wrong .stat-value {
+  color: var(--clr-wrong);
+}
+
+.result-message {
+  font-size: 0.95rem;
+  color: var(--clr-text-muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+/* ── 13. RESPONSIF — TABLET & MOBILE ── */
+@media (max-width: 480px) {
+  .start-card,
+  .result-card {
+    padding: 32px 20px;
+  }
+
+  .question-card {
+    padding: 20px 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Stat skor memenuhi lebar penuh di mobile */
+  .stat-score {
+    grid-column: 1 / -1;
+  }
+
+  .quiz-meta {
+    gap: 8px;
+  }
+}
+
+/* ── 14. AKSESIBILITAS: Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
